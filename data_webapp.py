@@ -11,7 +11,6 @@ import requests
 import json
 import datetime
 import ast
-from dksr_lib import dksr
 #import map_config
 
 st.set_page_config(layout="wide")
