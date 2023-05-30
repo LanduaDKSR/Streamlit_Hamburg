@@ -7,8 +7,8 @@ from streamlit_keplergl import keplergl_static
 from keplergl import KeplerGl
 from geojson import LineString as geoLS
 import geopandas
-import requests
-import json
+#import requests
+#import json
 import datetime
 import ast
 #import map_config
