@@ -145,8 +145,8 @@ d_2 = st.sidebar.date_input('Ende', datetime.date(2023,2,28))
 header1, header2 = st.columns([3,1])
 with header1:
     st.write("""
-    # Urban Data Challenge Hamburg
-    Mockup
+    # URBAN DATA CHALLENGE HAMBURG
+    ## Mockup
     """)
 
 with header2:
@@ -195,6 +195,9 @@ with tab2:
         #rental = rental_stations()
         keplergl_static(map_2)
     with col2:
+        st.text("")
+        st.text("")
+        st.text("")
         st.write("""Aktuelle Verfügbarkeit an Fahrrad-Leihstationen.
         Auf Knopfdruck lässt sich die aktuelle Situation anzeigen. (Ladezeit ca. 1 Minute)""")
         
