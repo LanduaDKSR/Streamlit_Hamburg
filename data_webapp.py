@@ -174,7 +174,7 @@ with tab1:
 with tab2:
     col1, col2 = st.columns([3,1])
     with col1:
-        if st.button('Auslastung Berechnen'):
+        if st.button('Verfügbarkeiten berechnen'):
             rental, map_2 = rental_stations()
         else:
             rental, map_2 = [], KeplerGl(height=650, config=config2)
