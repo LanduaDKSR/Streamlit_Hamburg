@@ -146,7 +146,7 @@ header1, header2 = st.columns([3,1])
 with header1:
     st.write("""
     # URBAN DATA CHALLENGE HAMBURG
-    ## Mockup
+    ### Mockup: 3D-Datencheck für nachhaltige Stadtmobilität
     """)
 
 with header2:
@@ -200,7 +200,8 @@ with tab2:
         st.text("")
         st.text("")
         st.write("""Aktuelle Verfügbarkeit an Fahrrad-Leihstationen.
-        Auf Knopfdruck lässt sich die aktuelle Situation anzeigen. (Dies kann je nach Internetverbindung ein paar Minuten dauern)""")
+        Auf Knopfdruck lässt sich die aktuelle Situation anzeigen.""")
+        st.write("""Dies kann je nach Internetverbindung ein paar Minuten dauern""")
         
 
     st.write("""
