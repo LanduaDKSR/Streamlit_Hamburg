@@ -155,7 +155,7 @@ with header2:
 
 #st.dataframe(df_filtered)
 
-tab1, tab2 = st.tabs(["Scooter", "Leihstationen"])
+tab1, tab2 = st.tabs(["Scooter und ÖPNV", "Leihstationen"])
 
 with tab1:
     col1, col2 = st.columns([3,1])
@@ -163,7 +163,8 @@ with tab1:
         #map_1.config = config
         keplergl_static(map_1)
     with col2:
-        st.write("""Für diese Visualisierung wurden virtuellen Trip-Daten erzeugt. Die Daten bilden keine realen Trips ab und dienen rein zur Veranschaulichung der Darstellbarkeit.""")
+        st.write("""Für diese Visualisierung wurden virtuellen Trip-Daten erzeugt. Die Daten bilden keine realen Trips ab und dienen rein zur Veranschaulichung der Darstellbarkeit.
+                Die Informationen über Positionen der HVV-Stationen wurden dem Open-Data-Portal entnommen und in das entsprechende Koordinatensystem transformiert.""")
 
     st.write("""
     ### Rohdaten
@@ -182,7 +183,7 @@ with tab2:
         keplergl_static(map_2)
     with col2:
         st.write("""Aktuelle Verfügbarkeit an Fahrrad-Leihstationen.
-        Auf Knopfdruck lässt sich die aktuelle Situation anzeigen. (Wartezeit ca. 1 Minute)""")
+        Auf Knopfdruck lässt sich die aktuelle Situation anzeigen. (Ladezeit ca. 1 Minute)""")
         
 
     st.write("""
