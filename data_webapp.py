@@ -126,8 +126,8 @@ def data_filter(data,dates):
     return filtered
 
 
-source1 = "c:/Users/FabianLandua/Documents/Data reports/Hamburg/Hamburg_dummy_trips.csv"
-source2 = "c:/Users/FabianLandua/Documents/Data reports/Hamburg/HVV-Haltestellen.xlsx"
+source1 = "Hamburg_dummy_trips.csv"
+source2 = "HVV-Haltestellen.xlsx" #c:/Users/FabianLandua/Documents/Data reports/Hamburg/
 
 df, map_1 = load_data(source1, source2)
 #hvv, map2 = stations_load(source2)
