@@ -23,6 +23,7 @@ image = Image.open('Logo.png')
 config = scooter_config.config
 config2 = stations_config.config
 
+
 def trip_layer(data):
     geo_list = pd.DataFrame(np.zeros((len(data)),dtype=object),columns=['geo_json'])
     geo_no_time = pd.DataFrame(np.zeros((len(data)),dtype=object),columns=['geo_json'])
@@ -94,7 +95,8 @@ def rental_stations():
     df = pd.DataFrame({'result': result_list, 'resultTime': resultTime_list, 'coordinates': coordinates_list})
     df['lon'] = df['coordinates'].apply(lambda x: x[0])
     df['lat'] = df['coordinates'].apply(lambda x: x[1])
-    return df
+    map_2 = KeplerGl(height=650, data={'Stationen': df}, config=config2)
+    return df, map_2
 
 
 #@st.cache_data
@@ -164,20 +166,24 @@ with tab1:
         st.write("""Für diese Visualisierung wurden virtuellen Trip-Daten erzeugt. Die Daten bilden keine realen Trips ab und dienen rein zur Veranschaulichung der Darstellbarkeit.""")
 
     st.write("""
-    ### Rohdaten Test
+    ### Rohdaten
     """)
     st.dataframe(df)
 
 with tab2:
     col1, col2 = st.columns([3,1])
     with col1:
+        if st.button('Auslastung Berechnen'):
+            rental, map_2 = rental_stations()
+        else:
+            rental, map_2 = [], KeplerGl(height=650, config=config2)
         #map_1.config = config
-        rental = rental_stations()
-        keplergl_static(KeplerGl(height=650, data={'Stationen': rental} ,config=config2))
+        #rental = rental_stations()
+        keplergl_static(map_2)
     with col2:
         st.write("""Aktuelle Verfügbarkeit an Fahrrad-Leihstationen.
         Auf Knopfdruck lässt sich die aktuelle Situation anzeigen. (Wartezeit ca. 1 Minute)""")
-        st.button('Auslastung Berechnen')
+        
 
     st.write("""
     ### Rohdaten
