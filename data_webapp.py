@@ -132,7 +132,7 @@ source2 = "HVV-Haltestellen.xlsx" #c:/Users/FabianLandua/Documents/Data reports/
 df, map_1 = load_data(source1, source2)
 #hvv, map2 = stations_load(source2)
 
-st.sidebar.write("""Filtern der Daten möglich""")
+st.sidebar.write("""Filtern der Daten perspektivisch möglich""")
 d_1 = st.sidebar.date_input('Start', datetime.date(2023,2,1))
 d_2 = st.sidebar.date_input('Ende', datetime.date(2023,2,28))
 
