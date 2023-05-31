@@ -163,7 +163,7 @@ with tab1:
         #map_1.config = config
         keplergl_static(map_1)
     with col2:
-        st.write("""Für diese Visualisierung wurden virtuellen Trip-Daten erzeugt. Die Daten bilden keine realen Trips ab und dienen rein zur Veranschaulichung der Darstellbarkeit.
+        st.write("""Für diese Visualisierung wurden virtuelle Trip-Daten erzeugt. Die Daten bilden keine realen Trips ab und dienen rein zur Veranschaulichung der Darstellbarkeit.
                 Die Informationen über Positionen der HVV-Stationen wurden dem Open-Data-Portal entnommen und in das entsprechende Koordinatensystem transformiert.""")
 
     st.write("""
