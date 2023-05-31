@@ -165,6 +165,19 @@ with tab1:
     with col2:
         st.write("""Für diese Visualisierung wurden virtuelle Trip-Daten erzeugt. Die Daten bilden keine realen Trips ab und dienen rein zur Veranschaulichung der Darstellbarkeit.
                 Die Informationen über Positionen der HVV-Stationen wurden dem Open-Data-Portal entnommen und in das entsprechende Koordinatensystem transformiert.""")
+        st.markdown("""---""")
+        st.text("")
+        st.text("")
+        st.text("")
+        st.text("")
+        st.text("")
+        st.text("")
+
+        fig = plt.figure(figsize=(6, 4))
+        fig.patch.set_facecolor("#F5F7FA")
+        sns.set_style(rc = {'axes.facecolor': "#F5F7FA"})
+        sns.histplot(x='length_km', data=df, bins=50, kde=True)
+        st.pyplot(fig)
 
     st.write("""
     ### Rohdaten
