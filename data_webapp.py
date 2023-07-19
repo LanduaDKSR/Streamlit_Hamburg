@@ -28,63 +28,11 @@ image_FHH = Image.open('Logo_FHH.gif')
 config = scooter_config.config
 config_2 = stations_config.config
 
+lng_min, lng_max, lat_min, lat_max = 9.9, 10.05, 53.5, 53.6
 
-def rental_stations():
-    entity = 'https://iot.hamburg.de/v1.1/Things?'
-    rows = '$skip=0&$top=5000&'
-    #gefiltert nach Fahrradzählstationen
-    filter = '$filter=((properties%2FownerThing+eq+%27Hamburg+Verkehrsanlagen%27))'
-    filter_observation = '?$skip=0&$top=1&$orderby=resultTime+desc'
-
-    url = entity + rows + filter
-    response = requests.get(url)
-    things_data = response.json()
-
-    # get a list of datastream_link from every thing
-    datastreams = []
-    for thing in things_data['value']:
-        thing = thing['Datastreams@iot.navigationLink'] 
-        datastreams.append(thing)
-
-    ## get a list of datastreams from every thing
-    # all links with last 3 observations
-    observations = []
-    for stream in datastreams:
-        stream = requests.get(stream)
-        data = stream.json()
-        value = data['value']
-        link = value[0]['Observations@iot.navigationLink']+filter_observation
-        observations.append(link)
-
-    final_df = pd.DataFrame() 
-    result_list = []
-    resultTime_list = []
-    coordinates_list = []
-
-    for observation in observations:
-        request = requests.get(observation)
-        data = request.json()
-        values = data['value']
-
-        for item in values:
-            # result = counts and resulttime = time
-            result_list.append(item['result'])
-            resultTime_list.append(item['resultTime'])
-
-            # holding coordinates
-            link = item['FeatureOfInterest@iot.navigationLink']
-
-            # Request 'FeatureOfInterest@iot.navigationLink'
-            request = requests.get(link)
-            feature_of_interest = request.json()
-            coordinates = feature_of_interest['feature']['geometry']['coordinates']
-            coordinates_list.append(coordinates)
-
-    df = pd.DataFrame({'result': result_list, 'resultTime': resultTime_list, 'coordinates': coordinates_list})
-    df['lon'] = df['coordinates'].apply(lambda x: x[0])
-    df['lat'] = df['coordinates'].apply(lambda x: x[1])
-    
-    return df#, map_2
+# POI Analyse
+Hbf = [10.008, 53.5527]
+colors = ["#FFED00", "#C00000", "#164194", "#3E7A48"]
 
 
 @st.cache_data
@@ -103,10 +51,15 @@ def load_data(source1, source2):
     stations['lat'] = gdf['geometry'].y
     stations['icon'] = pd.DataFrame(['place'] * len(stations))
     stations.reset_index(inplace=True)
-    stations.drop(['index'], axis=1, inplace=True)
+    stations.drop(['index', 'Gauss-Krueger E', 'Gauss-Krueger N'], axis=1, inplace=True)
+
+    stations = stations[stations['lon'] > lng_min]
+    stations = stations[stations['lon'] < lng_max]
+    stations = stations[stations['lat'] > lat_min]
+    stations = stations[stations['lat'] < lat_max]
 
     #df = pd.concat([df, trip_layer(df)], axis=1)
-    
+    #map_1 = KeplerGl(height=650, data = {'Scooters': df, 'stations': stations[['Name', 'lon', 'lat', 'icon']]}, config=config)
     return df, stations
 
 
@@ -120,8 +73,18 @@ source1 = "Hamburg_dummy_trips.csv"
 source2 = "HVV-Haltestellen.xlsx" #c:/Users/FabianLandua/Documents/Data reports/Hamburg/
 
 df, stations = load_data(source1, source2)
-map_1 = KeplerGl(height=650, data = {'Scooters': df, 'stations': stations[['Name', 'lon', 'lat', 'icon']]}, config=config)
+map_1 = KeplerGl(height=650, data = {'Scooters': df[0:50], 'stations': stations[['Name', 'lon', 'lat', 'icon']]}, config=config)
 #hvv, map2 = stations_load(source2)
+
+
+@st.cache_data
+def radius_calc(df):
+    r_500 = df['coordinates'].apply(lambda x: point_of_interest(x,point=Hbf,radius=500))
+    r_1000 = df['coordinates'].apply(lambda x: point_of_interest(x,point=Hbf,radius=1000))
+    r_1500 = df['coordinates'].apply(lambda x: point_of_interest(x,point=Hbf,radius=1500))
+    r_2000 = df['coordinates'].apply(lambda x: point_of_interest(x,point=Hbf,radius=2000))
+    return r_500, r_1000, r_1500, r_2000
+
 
 #st.sidebar.write("""Filtern der Daten perspektivisch möglich""")
 d_1 = st.sidebar.date_input('Start', datetime.date(2023,2,1))
@@ -154,7 +117,7 @@ with header2:
 
 #st.dataframe(df_filtered)
 
-tab1, tab2, tab3 = st.tabs(["Scooter und ÖPNV", "Point of Interest (POI)", "Leihstationen"])
+tab1, tab2 = st.tabs(["Scooter und ÖPNV", "Point of Interest (POI)"])
 
 with tab1:
     col11, col12 = st.columns([3,1])
@@ -186,18 +149,25 @@ with tab1:
 #    """)
 #    st.dataframe(df)
 
-# POI Analyse
-Hbf = [10.008, 53.5527]
-colors = ["#FFED00", "#C00000", "#164194", "#3E7A48"]
+r_500, r_1000, r_1500, r_2000 = radius_calc(df)
 
 with tab2:
     col21, col22, col23 = st.columns([1.2,1.8,1])
     with col21:
-        radius = st.slider('Radius', 0, 1000, 500, 50)
-        df['Hbf'] = df['coordinates'].apply(lambda x: point_of_interest(x,point=Hbf,radius=radius))
+        radius = st.slider('Radius', 500, 2000, 500, 500)
+        #df['Hbf'] = df['coordinates'].apply(lambda x: point_of_interest(x,point=Hbf,radius=radius))
+        if radius == 1000:
+            df['Hbf'] = r_1000
+        elif radius == 1500:
+            df['Hbf'] = r_1500
+        elif radius == 2000:
+            df['Hbf'] = r_2000
+        else:
+            df['Hbf'] = r_500
+        
         map_point = pd.DataFrame({'Name': ['Hauptbahnhof'], 'lon': [Hbf[0]], 'lat': [Hbf[1]], 'Radius': radius})
 
-        map = folium.Map(location=[Hbf[1], Hbf[0]], zoom_start=14)
+        map = folium.Map(location=[Hbf[1], Hbf[0]], zoom_start=12)
         folium.Circle([Hbf[1], Hbf[0]],
                             radius=radius,
                             tooltip="Umkreis",
@@ -220,7 +190,7 @@ with tab2:
         st.altair_chart(fig, theme="streamlit", use_container_width=True)
 
         # Nach Fahrstrecke
-        fig_2 = alt.Chart(df).mark_bar(size=14, opacity=0.8, ).encode(
+        fig_2 = alt.Chart(df).mark_bar(size=14, opacity=0.8).encode(
                 alt.X("length_km", bin=alt.Bin(extent=[0, 16], step=0.5)),
                 y='count(length_km)',
                 color=alt.Color('Hbf:N', scale=alt.Scale(range=colors), legend=None),
@@ -237,28 +207,5 @@ with tab2:
         st.markdown("""---""")
 
 
-#with tab3:
-#    col31, col32 = st.columns([3,1])
-#    with col31:
-#        if st.button('Verfügbarkeiten berechnen'):
-#            rental = rental_stations()
-#            map_2 = KeplerGl(height=650, data={'Stationen': rental}, config=config_2)
-#        else:
-#            rental, map_2 = [], KeplerGl(height=650, config=config)
-#        #map_1.config = config
-#        #rental = rental_stations()
-#        keplergl_static(map_2)
-#    with col32:
-#        st.text("")
-#        st.text("")
-#        st.text("")
-#        st.write("""Aktuelle Verfügbarkeit an Fahrrad-Leihstationen.
-#        Auf Knopfdruck lässt sich die aktuelle Situation anzeigen.""")
-#        st.write("""Dies kann je nach Internetverbindung einige Minuten dauern.""")
-        
 
-#    st.write("""
-#    ### Rohdaten
-#    """)
-#    st.dataframe(rental)
 
