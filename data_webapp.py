@@ -181,10 +181,10 @@ with tab1:
         sns.histplot(x='length_km', data=df, bins=50, kde=True)
         st.pyplot(fig)
 
-    st.write("""
-    ### Rohdaten
-    """)
-    st.dataframe(df)
+#    st.write("""
+#    ### Rohdaten
+#    """)
+#    st.dataframe(df)
 
 # POI Analyse
 Hbf = [10.008, 53.5527]
@@ -237,28 +237,28 @@ with tab2:
         st.markdown("""---""")
 
 
-with tab3:
-    col31, col32 = st.columns([3,1])
-    with col31:
-        if st.button('Verfügbarkeiten berechnen'):
-            rental = rental_stations()
-            map_2 = KeplerGl(height=650, data={'Stationen': rental}, config=config_2)
-        else:
-            rental, map_2 = [], KeplerGl(height=650, config=config)
-        #map_1.config = config
-        #rental = rental_stations()
-        keplergl_static(map_2)
-    with col32:
-        st.text("")
-        st.text("")
-        st.text("")
-        st.write("""Aktuelle Verfügbarkeit an Fahrrad-Leihstationen.
-        Auf Knopfdruck lässt sich die aktuelle Situation anzeigen.""")
-        st.write("""Dies kann je nach Internetverbindung einige Minuten dauern.""")
+#with tab3:
+#    col31, col32 = st.columns([3,1])
+#    with col31:
+#        if st.button('Verfügbarkeiten berechnen'):
+#            rental = rental_stations()
+#            map_2 = KeplerGl(height=650, data={'Stationen': rental}, config=config_2)
+#        else:
+#            rental, map_2 = [], KeplerGl(height=650, config=config)
+#        #map_1.config = config
+#        #rental = rental_stations()
+#        keplergl_static(map_2)
+#    with col32:
+#        st.text("")
+#        st.text("")
+#        st.text("")
+#        st.write("""Aktuelle Verfügbarkeit an Fahrrad-Leihstationen.
+#        Auf Knopfdruck lässt sich die aktuelle Situation anzeigen.""")
+#        st.write("""Dies kann je nach Internetverbindung einige Minuten dauern.""")
         
 
-    st.write("""
-    ### Rohdaten
-    """)
-    st.dataframe(rental)
+#    st.write("""
+#    ### Rohdaten
+#    """)
+#    st.dataframe(rental)
 
